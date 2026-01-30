@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>生日花語繪日誌 | 花菓波 f2boom</title>
+    <!-- 引入 Tailwind CSS 與 Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-gold: #b08d6d;
+            --brand-bg: #fdfaf7;
+            --paper-clean: #fffbf8;
+            --text-main: #4a4238;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--brand-bg);
+            color: var(--text-main);
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .serif { font-family: 'Noto Serif TC', serif; }
+        
+        /* 核心設計卡片 */
+        .brand-card {
+            background-color: var(--paper-clean);
+            border-radius: 40px;
+            box-shadow: 0 10px 40px rgba(176, 141, 109, 0.05);
+            border: 1px solid rgba(176, 141, 109, 0.1);
+            padding: 40px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 日期輸入區域客製化 */
+        .date-input-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(238, 225, 211, 0.5);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        #datePicker {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        /* 品牌按鈕 */
+        .brand-btn {
+            background: linear-gradient(135deg, #b8987a 0%, #d4a373 100%);
+            color: white;
+            border-radius: 24px;
+            font-size: 1.1rem;
+            letter-spacing: 0.2em;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(184, 152, 122, 0.2);
+            width: 100%;
+            padding: 20px 0;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            z-index: 30;
+        }
+
+        /* 頌缽音浪動畫 */
+        .audio-wave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            height: 18px;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .audio-wave.active { opacity: 1; }
+        .bar {
+            width: 2px;
+            height: 100%;
+            background: var(--brand-gold);
+            border-radius: 1px;
+            animation: wave 1.5s infinite ease-in-out;
+        }
+        @keyframes wave {
+            0%, 100% { height: 3px; }
+            50% { height: 18px; }
+        }
+
+        /* 植物標籤 */
+        .botanical-tag {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 8px 15px;
+            border-radius: 2px;
+            font-size: 11px;
+            z-index: 10;
+            letter-spacing: 0.15em;
+            color: #555;
+            border-left: 3px solid var(--brand-gold);
+        }
+
+        /* 藝術相框 */
+        .art-frame {
+            position: relative;
+            background: #ffffff;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+            border-radius: 4px;
+        }
+
+        /* 進場動畫 */
+        .fade-in { animation: fadeIn 1.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center px-6 pt-12 pb-24">
+
+    <header class="text-center mb-12">
+        <div class="inline-block relative mb-4">
+            <span class="serif text-2xl font-bold tracking-[0.4em] text-[#b08d6d]">花菓波 f2boom</span>
+            <div class="h-0.5 w-full bg-[#f1e09d] mt-1 opacity-40"></div>
+        </div>
+        <h1 class="serif text-2xl font-bold text-stone-700 mb-2">生日花語繪日誌</h1>
+        <p class="text-stone-400 text-[9px] tracking-[0.3em] font-light uppercase">Pure Essence & Solar Resonance</p>
+    </header>
+
+    <main class="w-full max-w-md">
+        <!-- 輸入區域 -->
+        <div class="brand-card text-center mb-12">
+            <p class="text-stone-500 text-[15px] mb-10 serif tracking-[0.15em]">「 探尋那朵專屬於你的靈魂之花 」</p>
+            
+            <div class="date-input-container">
+                <span id="dateText" class="text-stone-300">輸入誕生日期</span>
+                <input type="date" id="datePicker" onchange="updateDateDisplay()">
+            </div>
+            
+            <button onclick="runOracle()" class="brand-btn font-medium">鑑定生日花</button>
+
+            <!-- 15秒音浪視覺效果 -->
+            <div id="audioVisualizer" class="audio-wave">
+                <div class="bar" style="animation-delay: 0.1s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+                <div class="bar" style="animation-delay: 0.5s"></div>
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
+                <span class="text-[9px] text-stone-400 ml-3 tracking-[0.2em] uppercase">頻率共鳴中 (15s)</span>
+            </div>
+        </div>
+
+        <!-- 結果展示區域 -->
+        <div id="resultArea" class="hidden space-y-12 fade-in">
+            <!-- 藝術相框 -->
+            <div class="art-frame">
+                <div id="imageFrame" class="relative aspect-[4/5] bg-stone-50 overflow-hidden">
+                    <div id="botanicalTag" class="botanical-tag hidden">
+                        <span id="latinName" class="italic">--</span>
+                    </div>
+                    <img id="flowerImage" class="hidden w-full h-full object-cover" src="">
+                    <div id="loadingOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-stone-50/98">
+                        <div class="w-10 h-10 border border-stone-100 border-t-[#b08d6d] rounded-full animate-spin"></div>
+                        <p class="mt-4 text-[10px] text-stone-400 tracking-widest uppercase">Painting with Light</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 解析卡片 -->
+            <div class="brand-card">
+                <div class="border-b border-stone-100 pb-8 mb-10 text-center">
+                    <span id="resCoord" class="text-stone-300 text-[10px] tracking-[0.5em] uppercase block mb-3">Temporal Trace</span>
+                    <h2 id="resName" class="serif text-4xl font-bold text-stone-800 tracking-widest">--</h2>
+                </div>
+
+                <div class="space-y-12">
+                    <div>
+                        <h3 class="text-[10px] font-bold text-stone-300 mb-5 tracking-[0.4em] uppercase">靈魂之花</h3>
+                        <p id="resMeaning" class="text-stone-700 text-[17px] leading-loose serif italic px-2"></p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-[10px] font-bold text-stone-300 mb-5 tracking-[0.4em] uppercase">時空的耳語</h3>
+                        <p id="resAction" class="text-stone-600 text-[16px] leading-relaxed pl-6 border-l border-stone-200 serif"></p>
+                    </div>
+                </div>
+
+                <div class="pt-14 mt-12 border-t border-stone-100 text-center">
+                    <p class="text-stone-400 text-sm italic mb-8 tracking-widest">
+                        與花菓波一起，在花香中感受生活
+                    </p>
+                    <a href="https://linktr.ee/thef2boom" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       class="inline-block border-b border-[#b08d6d] text-[#4a4238] font-medium tracking-[0.3em] text-sm transition-opacity hover:opacity-60">
+                       FIND YOUR BLOSSOM
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const apiKey = ""; // 系統環境變數自動帶入
+        let audioCtx = null;
+
+        // 24 節氣深度解析
+        const solarTermInsights = {
+            "小寒": "寒氣正深，是回歸內在最好的時刻。在沈默中梳理思緒，妳會發現那些微小的光亮正溫柔地指引方向。",
+            "大寒": "在冷冽的靜謐中，適合聽見靈魂深處最純粹的頻率。不需要急著綻放，蓄積能量也是一種溫暖的成長。",
+            "立春": "春日初始，生命的期許正悄然發芽。這是一個適合『勇敢開始』的時刻，去觸碰那些未曾被察覺的美好。",
+            "雨水": "細雨潤物，生命正在溫潤中緩緩甦醒。學會接納那些柔軟的力量，它們終將匯聚成不可忽視的生機。",
+            "驚蟄": "雷鳴驚醒萬物，內在的勇氣也應隨之覺醒。放下恐懼，讓直覺帶領妳跨出關鍵的一步。",
+            "春分": "平衡的時刻。在白晝與黑夜交替間，感受那份不多不少的和諧，讓心靈重獲秩序與平靜。",
+            "清明": "萬物潔淨明朗，適合掃去心靈的塵土。給自己一個透氣的空間，去感受生命中最純淨的本質。",
+            "穀雨": "雨生百穀，正是滋養夢想的好季節。沈下心來耕耘內在，時間會給予最誠實的饋贈。",
+            "立夏": "夏日光影漸長，萬物正值繁茂。感受生命中那份不可阻擋的生命力，大膽去擴張妳的視界。",
+            "小滿": "未滿才是最豐實的狀態。在追求完美的路上留下一點餘裕，那份從容會讓妳的美更加持久。",
+            "芒種": "忙碌而充實，生命的韻律在指尖流動。享受付出的過程，妳所播下的每一顆種子都有其意義。",
+            "夏至": "陽氣至極，感受最極致的光與熱。將內在的熱情釋放，去照亮那些妳所珍視的人事物。",
+            "小暑": "微熱的季節，需要一點沈靜的智慧。在浮躁中尋找清涼，保持一顆通透且不被左右的心。",
+            "大暑": "在極致的熱情與光照下，適合揮灑所有的能量。這是一份對生命的熱烈擁抱，去綻放最耀眼的光芒。",
+            "立秋": "微風帶走暑氣，生命進入更深邃的沈澱。在豐盛與內斂之間，找尋最舒適的節奏。",
+            "處暑": "暑氣漸退，是整理收穫的時候了。學會斷捨離，讓靈魂在簡約中重新獲得飛翔的力量。",
+            "白露": "露水漸重，提醒我們珍惜那些纖細而易逝的美好。在清晨的微光中，感謝自己一路走來的堅持。",
+            "秋分": "收穫與平衡的季節。在明亮而剔透的秋光中，整理內心的秩序，找回妳的那份從容與頻率。",
+            "寒露": "寒氣露凝，生命趨於沈穩。專注於妳真正熱愛的事物，那份執著會讓妳在清冷中依然溫暖。",
+            "霜降": "寒霜將至，大地的色彩更顯濃烈。這象徵著深度的轉化，在改變中看見更成熟、更完整的自己。",
+            "立冬": "萬物收藏，生命進入修復的循環。溫柔地對待自己，將溫暖轉向內在，為下一季的綻放做準備。",
+            "小雪": "雪花雖微，卻能覆蓋萬物。體會平淡生活中的神聖性，每一件小事都值得被細心對待。",
+            "大雪": "天地蒼茫，在大雪中回歸絕對的安靜。這是與自我深度對話的時刻，在沈默中感受生命的重量。",
+            "冬至": "最長的黑夜是為了守護內在的光。
