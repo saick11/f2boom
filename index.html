@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>生日花語繪日誌 | 花菓波 f2boom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-gold: #b08d6d;
+            --brand-bg: #fdfaf7;
+            --paper-clean: #fffbf8; /* 極簡淨化米色 */
+            --text-main: #4a4238;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--brand-bg);
+            color: var(--text-main);
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+        .serif { font-family: 'Noto Serif TC', serif; }
+        
+        /* 淨化版卡片：移除干擾斜紋，僅保留極致簡約的層次感 */
+        .brand-card {
+            background-color: var(--paper-clean);
+            border-radius: 40px;
+            box-shadow: 0 10px 40px rgba(176, 141, 109, 0.05);
+            border: 1px solid rgba(176, 141, 109, 0.1);
+            padding: 40px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .date-input-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(238, 225, 211, 0.5);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            font-size: 1.2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        #datePicker {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            width: 100%;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .brand-btn {
+            background: linear-gradient(135deg, #b8987a 0%, #d4a373 100%);
+            color: white;
+            border-radius: 24px;
+            font-size: 1.1rem;
+            letter-spacing: 0.2em;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(184, 152, 122, 0.2);
+            border: none;
+            width: 100%;
+            padding: 20px 0;
+            cursor: pointer;
+        }
+
+        .audio-wave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            height: 18px;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .audio-wave.active { opacity: 1; }
+        .bar {
+            width: 1.5px;
+            height: 100%;
+            background: var(--brand-gold);
+            border-radius: 1px;
+            animation: wave 1.5s infinite ease-in-out;
+        }
+        @keyframes wave {
+            0%, 100% { height: 3px; }
+            50% { height: 18px; }
+        }
+
+        .botanical-tag {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            padding: 8px 15px;
+            border-radius: 2px;
+            font-size: 11px;
+            z-index: 10;
+            letter-spacing: 0.15em;
+            color: #555;
+            border-left: 2px solid var(--brand-gold);
+        }
+
+        .fade-in { animation: fadeIn 1.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .art-frame {
+            position: relative;
+            background: #ffffff;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center px-6 pt-12 pb-24">
+
+    <header class="text-center mb-12">
+        <div class="inline-block relative mb-4">
+            <span class="serif text-2xl font-bold tracking-[0.4em] text-[#b08d6d]">花菓波 f2boom</span>
+            <div class="h-0.5 w-full bg-[#f1e09d] mt-1 opacity-40"></div>
+        </div>
+        <h1 class="serif text-2xl font-bold text-stone-700 mb-2">生日花語繪日誌</h1>
+        <p class="text-stone-400 text-[9px] tracking-[0.3em] font-light uppercase">Pure Essence & Solar Resonance</p>
+    </header>
+
+    <main class="w-full max-w-md">
+        <!-- 輸入區 -->
+        <div class="brand-card text-center mb-12">
+            <p class="text-stone-500 text-[15px] mb-10 serif tracking-[0.15em]">「 探尋那朵專屬於你的靈魂之花 」</p>
+            
+            <div class="date-input-container" id="dateDisplay">
+                <span id="dateText" class="text-stone-300">輸入誕生日期</span>
+                <input type="date" id="datePicker" onchange="updateDateDisplay()">
+            </div>
+            
+            <button onclick="runOracle()" class="brand-btn font-medium">鑑定生日花</button>
+
+            <div id="audioVisualizer" class="audio-wave">
+                <div class="bar" style="animation-delay: 0.1s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+                <div class="bar" style="animation-delay: 0.5s"></div>
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
+                <span class="text-[9px] text-stone-400 ml-3 tracking-[0.2em] uppercase">共鳴中</span>
+            </div>
+        </div>
+
+        <!-- 結果顯示區 -->
+        <div id="resultArea" class="hidden space-y-12 fade-in">
+            <div class="art-frame">
+                <div id="imageFrame" class="relative aspect-[4/5] bg-stone-50 overflow-hidden">
+                    <div id="botanicalTag" class="botanical-tag hidden">
+                        <span id="latinName" class="italic">--</span>
+                    </div>
+                    <img id="flowerImage" class="hidden w-full h-full object-cover" src="">
+                    <div id="loadingOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-stone-50/98">
+                        <div class="w-10 h-10 border border-stone-100 border-t-[#b08d6d] rounded-full animate-spin"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-card">
+                <div class="border-b border-stone-100 pb-8 mb-10 text-center">
+                    <span id="resCoord" class="text-stone-300 text-[10px] tracking-[0.5em] uppercase block mb-3">Temporal Trace</span>
+                    <h2 id="resName" class="serif text-4xl font-bold text-stone-800 tracking-widest">--</h2>
+                </div>
+
+                <div class="space-y-12">
+                    <div>
+                        <h3 class="text-[10px] font-bold text-stone-300 mb-5 tracking-[0.4em] uppercase">靈魂之花</h3>
+                        <p id="resMeaning" class="text-stone-700 text-[17px] leading-loose serif italic px-2"></p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-[10px] font-bold text-stone-300 mb-5 tracking-[0.4em] uppercase">時空的耳語</h3>
+                        <p id="resAction" class="text-stone-600 text-[16px] leading-relaxed pl-6 border-l border-stone-200 serif"></p>
+                    </div>
+                </div>
+
+                <div class="pt-14 mt-12 border-t border-stone-100 text-center">
+                    <p class="text-stone-400 text-sm italic mb-8 tracking-widest">
+                        與花菓波一起，在花香中感受生活
+                    </p>
+                    <a href="https://linktr.ee/thef2boom" target="_blank" 
+                       class="inline-block border-b border-stone-300 pb-1 text-stone-600 font-medium text-sm tracking-[0.3em] hover:text-[#b08d6d] transition-all">
+                       FIND YOUR BLOSSOM
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const apiKey = "";
+        let audioCtx = null;
+
+        // 影像設定完全維持經典 (空間感、光影、藝術細節)
+        const flowers = [
+            { name: "大馬士革玫瑰", latin: "Rosa damascena", desc: "A single pink Damask rose in a minimal ceramic cup, morning sunlight from window, soft long shadows, moody interior photography, aesthetic lifestyle, macro texture of petals, artistic clarity." },
+            { name: "櫻花", latin: "Prunus serrulata", desc: "Cherry blossoms in a glass vase with water ripples, scattered petals on a dark wooden table, cinematic lighting, shallow depth of field, poetic space, artistic minimalist." },
+            { name: "帝王花", latin: "Protea cynaroides", desc: "A dried Protea flower in a sculptural concrete vase, dramatic side lighting, high contrast shadows, architectural space, wabi-sabi aesthetic." },
+            { name: "洋桔梗", latin: "Eustoma", desc: "Lisianthus in a vintage teacup, soft backlight, hazy atmosphere, dreamy lifestyle photography, cream and green tones, delicate textures." },
+            { name: "鈴蘭", latin: "Convallaria majalis", desc: "Mystical Lily of the valley, glowing tiny bells, deep forest background, magical atmosphere, macro lens." }
+        ];
+
+        const flowerSoulInsights = {
+            "大馬士革玫瑰": "你擁有一種『帶刺的慈愛』。玫瑰的重瓣是為了守護核心的芳香，而刺則是靈魂的邊界；你深知唯有守住自我的稜角，那份優雅才不至於淪為廉價的討好。",
+            "櫻花": "你的美學帶有一種『極致的瞬間感』。櫻花從不戀棧枝頭，那種隨風而逝的果決，映射出你內在對生命純度的追求——與其漫長地平庸，不如在對的時間裡，燃盡所有燦爛。",
+            "帝王花": "你的質地是『原始且孤傲的』。身為最古老的植物之一，你不需要纖細的修飾，那種木質般的堅毅與碩大的花冠，是你與生俱來對荒野與時間的對抗。",
+            "洋桔梗": "你在『柔軟中藏著頑強』。看似如綢緞般輕盈的花瓣，卻能在多變的環境中持續綻放；這象徵著你靈魂中那種不可被摧毀的韌性，越是纖細，越是強大。",
+            "鈴蘭": "你是一種『沈默的召喚』。微小的鐘形花朵在深谷中低調綻放，這代表你內在深藏的一種純粹——不需高聲喧嘩，那份幽幽滲透的影響力，自然會讓懂你的人循香而至。"
+        };
+
+        // 節氣判斷演算法：精準對應輸入的日期
+        function getSolarTermByDate(month, day) {
+            const solarTerms = [
+                { name: "小寒", m: 1, d: 5 }, { name: "大寒", m: 1, d: 20 },
+                { name: "立春", m: 2, d: 4 }, { name: "雨水", m: 2, d: 19 },
+                { name: "驚蟄", m: 3, d: 5 }, { name: "春分", m: 3, d: 20 },
